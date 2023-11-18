@@ -1,69 +1,23 @@
 const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
-const Fruit = require('./models/fruits.js')
+const methodOverride = require('method-override');
+const fruitsController = require('./controllers/fruits');
+require('dotenv').config()
+const mongoUrl = process.env.MONGOURI
+const PORT = process.env.PORT
 
 // DATABASE CONNECTION
-mongoose.connect('mongodb://127.0.0.1:27017/basiccrud')
+mongoose.connect(mongoUrl + '/fruits')
 mongoose.connection.once('open', ()=> {
     console.log('connected to mongo')
 })
 
 // MIDDLEWARE
 app.use(express.urlencoded({extended:true}))
+app.use(methodOverride('_method'))
+app.use('/fruits', fruitsController);
 
-// ROUTES (I.N.D.U.C.E.S.)
-
-// INDEX
-app.get('/fruits', (req, res)=>{
-    Fruit.find({}, (error, allFruits)=>{
-        res.render('index.ejs', {
-            fruits: allFruits
-        })
-    })
-})
-
-// NEW
-app.get('/fruits/new', (req, res) => {
-    res.render('new.ejs')
-})
-
-// DELETE
-
-
-// UPDATE
-
-
-// CREATE
-app.post('/fruits', (req, res) => {
-    if(req.body.readyToEat === 'on') {
-        req.body.readyToEat = true;
-    } else {
-        req.body.readyToEat = false;
-    }
-
-    Fruit.create(req.body, (error, createdFruit) => {
-        if(error) {
-            console.log(error)
-            res.send(error)
-        } else {
-            res.redirect('/fruits')
-        }
-    })
-})
-
-// EDIT
-
-
-// SHOW
-app.get('/fruits/:id', (req, res)=>{
-    Fruit.findById(req.params.id, (err, foundFruit)=>{
-        res.render('show.ejs', {
-            fruit: foundFruit
-        })
-    })
-})
-
-app.listen(3000, ()=> {
-    console.log(`listening on port 3000`)
+app.listen(PORT, ()=> {
+    console.log(`listening on port ${PORT}`)
 })
