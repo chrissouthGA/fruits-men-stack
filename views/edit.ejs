@@ -5,6 +5,7 @@
         <title></title>
     </head>
     <body>
+        <%- include('./partials/nav.ejs') %>
         <h1>Edit Fruit Page</h1>
         <form action="/fruits/<%=fruit.id%>?_method=PUT" method="POST">
     		<!--  NOTE: the form is pre-populated with values for the server-->

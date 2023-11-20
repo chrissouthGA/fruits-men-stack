@@ -5,6 +5,7 @@
         <title>Fruits Show</title>
     </head>
     <body>
+        <%- include('./partials/nav.ejs') %>
         <h1>Fruits show page</h1>
         The <%=fruit.name; %> is  <%=fruit.color; %>.
         <% if(fruit.readyToEat === true){ %>

@@ -15,6 +15,7 @@ mongoose.connection.once('open', ()=> {
 
 // MIDDLEWARE
 app.use(express.urlencoded({extended:true}))
+app.use(express.json())
 app.use(methodOverride('_method'))
 app.use('/fruits', fruitsController);
 
