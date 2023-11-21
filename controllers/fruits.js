@@ -2,31 +2,42 @@ const express = require('express')
 const router = express.Router()
 const Fruit = require('../models/fruits')
 
+
+const isAuthenticated = (req, res, next) => {
+    if(req.session.currentUser) {
+        return next()
+    } else {
+        res.redirect('/sessions/new')
+    }
+}
 // ROUTES (I.N.D.U.C.E.S.)
 
 // INDEX
-router.get('/', (req, res)=>{
+router.get('/', isAuthenticated, (req, res)=>{
     Fruit.find({}, (error, allFruits)=>{
         res.render('index.ejs', {
-            fruits: allFruits
+            fruits: allFruits,
+            currentUser: req.session.currentUser
         })
     })
 })
 
 // NEW
-router.get('/new', (req, res) => {
-    res.render('new.ejs')
+router.get('/new', isAuthenticated, (req, res) => {
+    res.render('new.ejs', {
+        currentUser: req.session.currentUser
+    })
 })
 
 // DELETE
-router.delete('/:id', (req, res) => {
+router.delete('/:id', isAuthenticated, (req, res) => {
     Fruit.findByIdAndRemove(req.params.id, (err, data) => {
         res.redirect('/fruits')
     })
 })
 
 // UPDATE
-router.put('/:id', (req, res) => {
+router.put('/:id', isAuthenticated, (req, res) => {
     if(req.body.readyToEat === 'on') {
         req.body.readyToEat = true
     } else {
@@ -38,7 +49,7 @@ router.put('/:id', (req, res) => {
 })
 
 // CREATE
-router.post('/', (req, res) => {
+router.post('/', isAuthenticated, (req, res) => {
     if(req.body.readyToEat === 'on') {
         req.body.readyToEat = true;
     } else {
@@ -56,17 +67,21 @@ router.post('/', (req, res) => {
 })
 
 // EDIT
-router.get('/:id/edit', (req, res) => {
+router.get('/:id/edit', isAuthenticated, (req, res) => {
     Fruit.findById(req.params.id, (err, foundFruit) => {
-        res.render('edit.ejs', {fruit: foundFruit})
+        res.render('edit.ejs', {
+            fruit: foundFruit,
+            currentUser: req.session.currentUser
+        })
     })
 })
 
 // SHOW
-router.get('/:id', (req, res)=>{
+router.get('/:id', isAuthenticated, (req, res)=>{
     Fruit.findById(req.params.id, (err, foundFruit)=>{
         res.render('show.ejs', {
-            fruit: foundFruit
+            fruit: foundFruit,
+            currentUser: req.session.currentUser
         })
     })
 })
